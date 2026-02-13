@@ -7,8 +7,9 @@
     <title>Misi Cinta Tuyul 💘</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <link
-        href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Plus+Jakarta+Sans:wght@400;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap"
         rel="stylesheet">
 
     <style>
@@ -31,81 +32,115 @@
             font-family: 'Dancing Script', cursive;
         }
 
+        /* Background Animasi */
         #gameArea {
-            background: radial-gradient(circle at center, #310a31 0%, #0f0514 100%);
+            background: radial-gradient(circle at center, #2e1065 0%, #0f172a 100%);
             height: 100dvh;
             width: 100%;
             position: relative;
         }
 
         .neon-text {
-            text-shadow: 0 0 10px #ff4da6, 0 0 20px #ff4da6;
+            text-shadow: 0 0 10px #f472b6, 0 0 20px #db2777;
         }
 
+        /* Floating Hearts Background */
+        .heart-bg {
+            position: absolute;
+            color: rgba(244, 114, 182, 0.2);
+            pointer-events: none;
+            animation: floatUp 6s linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-10vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Player & Items */
         .player {
-            filter: drop-shadow(0 0 8px #fff);
+            filter: drop-shadow(0 0 15px #f472b6);
             z-index: 50;
-            transition: transform 0.1s;
+            transition: transform 0.1s ease;
+            font-size: 3rem;
         }
 
+        /* Progress Bar */
         .progress-container {
-            width: 70%;
-            height: 12px;
+            width: 80%;
+            height: 14px;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(244, 114, 182, 0.3);
+            overflow: hidden;
+            backdrop-blur: blur(4px);
         }
 
         #bar {
             height: 100%;
             width: 0%;
-            background: linear-gradient(90deg, #f472b6, #db2777);
-            box-shadow: 0 0 15px #f472b6;
-            transition: width 0.3s ease;
+            background: linear-gradient(90deg, #f472b6, #e11d48);
+            box-shadow: 0 0 20px #f472b6;
+            transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        .ctrl-grid {
+        /* Responsive Controls */
+        .controls-container {
+            position: absolute;
+            bottom: 30px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 25px;
+            z-index: 100;
+        }
+
+        .d-pad {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            position: absolute;
-            bottom: 40px;
-            left: 25px;
+            gap: 8px;
         }
 
-        .btn-circle {
-            width: 65px;
-            height: 65px;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(8px);
-            border-radius: 50%;
+        .btn-ctrl {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            font-size: 22px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         }
 
-        .btn-circle:active {
-            background: rgba(244, 114, 182, 0.5);
+        .btn-ctrl:active {
+            background: #f472b6;
             transform: scale(0.9);
         }
 
         #dashBtn {
-            position: absolute;
-            bottom: 55px;
-            right: 35px;
-            width: 85px;
-            height: 85px;
-            background: linear-gradient(135deg, #ec4899, #be185d);
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #f472b6, #e11d48);
             border-radius: 50%;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            box-shadow: 0 0 25px rgba(236, 72, 153, 0.6);
-            border: 2px solid white;
-            font-size: 14px;
+            box-shadow: 0 0 20px rgba(244, 114, 182, 0.5);
+            border: 3px solid white;
+            font-size: 12px;
         }
 
         .screen {
@@ -115,10 +150,33 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            z-index: 100;
-            background: rgba(15, 23, 42, 0.98);
-            padding: 25px;
+            z-index: 200;
+            background: #0f172a;
+            padding: 20px;
             text-align: center;
+        }
+
+        /* Animasi Menang (Card) */
+        .win-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 30px;
+            padding: 30px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: slideUp 0.8s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
     </style>
 </head>
@@ -126,106 +184,122 @@
 <body>
 
     <div id="gameUI"
-        class="fixed top-0 left-0 w-full p-6 z-50 flex justify-between items-center pointer-events-none opacity-0 transition-opacity duration-500">
-        <div class="bg-black/40 px-5 py-2 rounded-full border border-pink-500/40 backdrop-blur-md">
-            ❤️ <span id="life" class="font-bold text-pink-400 text-xl">3</span>
+        class="fixed top-0 left-0 w-full p-6 z-50 flex justify-between items-center opacity-0 transition-opacity duration-500 pointer-events-none">
+        <div class="flex flex-col gap-1">
+            <div
+                class="bg-black/40 px-4 py-1.5 rounded-full border border-pink-500/30 backdrop-blur-md flex items-center gap-2">
+                <span class="text-lg">❤️</span>
+                <span id="life" class="font-bold text-pink-400">3</span>
+            </div>
         </div>
-        <div class="bg-black/40 px-5 py-2 rounded-full border border-pink-500/40 backdrop-blur-md">
-            Level: <span id="level" class="font-bold">1</span>
+        <div class="bg-black/40 px-4 py-1.5 rounded-full border border-pink-500/30 backdrop-blur-md">
+            <span class="text-xs uppercase tracking-tighter opacity-70">Level</span>
+            <span id="level" class="font-bold text-pink-400 ml-1">1</span>
         </div>
     </div>
 
     <div id="startScreen" class="screen">
+        <div class="heart-bg" style="left:10%; animation-delay: 0s;">❤️</div>
+        <div class="heart-bg" style="left:80%; animation-delay: 2s;">💖</div>
         <lottie-player src="https://assets3.lottiefiles.com/packages/lf20_i9mxcD.json" background="transparent"
-            speed="1" style="width: 200px; height: 200px;" loop autoplay></lottie-player>
-        <h1 class="text-3xl font-aesthetic text-pink-500 mb-6 neon-text">Misi Cinta Tuyul</h1>
-
-        <div class="bg-white/5 p-8 rounded-[40px] border border-white/10 mb-10 max-w-sm shadow-2xl backdrop-blur-sm">
-            <p class="text-slate-200 text-sm md:text-base leading-relaxed italic">
-                Maaf ya aku belum bisa kasih hadiah seperti orang lain.<br>
-                Belum bisa datang bawa bunga sungguhan.<br>
-                Untuk sekarang, aku cuma bisa kasih ini.<br><br>
-                Sederhana mungkin. Tapi tulus.
+            speed="1" style="width: 180px; height: 180px;" loop autoplay></lottie-player>
+        <h1 class="text-4xl font-aesthetic text-pink-500 mb-4 neon-text">Misi Cinta Tuyul</h1>
+        <div class="win-card max-w-xs mb-8">
+            <p class="text-slate-300 text-sm leading-relaxed italic">
+                "Maaf ya aku belum bisa kasih hadiah mewah.<br>
+                Cuma sebuah game kecil untuk kamu yang spesial."
             </p>
         </div>
-
         <button onclick="initGame()"
-            class="bg-gradient-to-r from-pink-500 to-rose-600 px-16 py-4 rounded-full font-bold shadow-xl shadow-pink-500/40 uppercase tracking-widest text-sm active:scale-95 transition-transform">
-            Mulai Misi 💘
+            class="bg-pink-600 hover:bg-pink-500 px-12 py-4 rounded-full font-bold shadow-lg shadow-pink-500/30 active:scale-90 transition-all uppercase tracking-widest text-sm">
+            Buka Cintaku 💘
         </button>
     </div>
 
     <div id="gameArea" style="display: none;">
-        <div id="player" class="player absolute text-4xl select-none">👻</div>
+        <div id="player" class="player absolute select-none">👻</div>
 
-        <div class="fixed bottom-36 left-0 w-full flex justify-center pointer-events-none">
+        <div class="fixed top-20 left-0 w-full flex justify-center pointer-events-none">
             <div class="progress-container">
                 <div id="bar"></div>
             </div>
         </div>
 
-        <div class="ctrl-grid">
-            <div></div>
-            <div class="btn-circle" id="up">⬆️</div>
-            <div></div>
-            <div class="btn-circle" id="left">⬅️</div>
-            <div class="btn-circle" id="down">⬇️</div>
-            <div class="btn-circle" id="right">➡️</div>
+        <div class="controls-container">
+            <div class="d-pad">
+                <div></div>
+                <div class="btn-ctrl" id="up">▲</div>
+                <div></div>
+                <div class="btn-ctrl" id="left">◀</div>
+                <div class="btn-ctrl" id="down">▼</div>
+                <div class="btn-ctrl" id="right">▶</div>
+            </div>
+            <div id="dashBtn" ontouchstart="activateDash()">
+                <span>⚡</span>
+                <span>DASH</span>
+            </div>
         </div>
-        <div id="dashBtn" ontouchstart="activateDash()">⚡ DASH</div>
     </div>
 
-    <div id="winScreen" class="screen" style="display: none; overflow-y: auto;">
-        <div class="py-10">
+    <div id="winScreen" class="screen"
+        style="display: none; overflow-y: auto; background: radial-gradient(circle, #4c0519 0%, #0f172a 100%);">
+        <div class="win-card max-w-sm mx-auto my-auto">
             <lottie-player src="https://assets10.lottiefiles.com/packages/lf20_m6cu96.json" background="transparent"
-                speed="1" style="width: 250px; height: 250px; margin: auto;" loop autoplay></lottie-player>
-            <h2 class="text-4xl font-aesthetic text-pink-500 mb-4 neon-text">Happy Valentine 💘</h2>
-
-            <div
-                class="bg-white/10 p-8 rounded-[40px] border border-white/20 backdrop-blur-lg mb-8 max-w-sm mx-auto text-left shadow-2xl">
-                <p class="text-sm leading-relaxed text-slate-100 font-light">
-                    Terima kasih ya… sudah hadir di hidupku. Mungkin kamu nggak pernah sadar, tapi kehadiran kamu itu
-                    berarti banget buat aku.<br><br>
-                    Di tengah jarak dan kesibukan, kamu tetap jadi salah satu alasan kenapa aku sering senyum sendiri.
-                    Aku bangga banget sama perjuangan kamu di D3 Keperawatan ini.<br><br>
-                    <span class="text-pink-400 font-bold font-aesthetic text-xl drop-shadow-sm">Nanti pas kamu wisuda,
-                        bunga tercantik dariku akan sampai ke tanganmu. Janji! 💐</span>
+                speed="1" style="width: 150px; height: 150px; margin: auto;" loop autoplay></lottie-player>
+            <h2 class="text-3xl font-aesthetic text-pink-500 mb-4 neon-text">Happy Valentine Sayang! 💘</h2>
+            <div class="text-left space-y-4 text-slate-100 text-sm leading-relaxed">
+                <p>Terima kasih sudah memenangkan game ini, sama seperti kamu yang sudah memenangkan hatiku.</p>
+                <p>Aku tahu kita punya kesibukan masing-masing, tapi kamu harus tahu kalau kamu adalah penyemangat
+                    terbesarku.</p>
+                <p class="bg-pink-500/20 p-4 rounded-2xl border border-pink-500/30 text-pink-300 font-semibold italic">
+                    "Nanti di hari wisudamu, aku akan datang membawa bunga yang paling indah, seindah senyummu saat
+                    melihat ini."
                 </p>
+                <p class="text-xs text-center opacity-60">- Dari Orang yang Selalu Mengagumimu -</p>
             </div>
 
-            <div class="flex flex-col gap-5 items-center">
+            <div class="mt-8 flex flex-col gap-4">
                 <a href="logic.html"
-                    class="bg-white text-pink-600 px-12 py-4 rounded-full font-bold shadow-2xl uppercase tracking-widest text-sm hover:scale-105 transition-transform">
+                    class="bg-gradient-to-r from-pink-500 to-rose-600 text-white px-8 py-4 rounded-full font-bold shadow-xl text-xs uppercase tracking-widest hover:scale-105 transition-transform">
                     Buka Surat Terakhir 💌
                 </a>
-                <button onclick="backToStart()"
-                    class="text-pink-300 text-sm underline opacity-70 hover:opacity-100 transition-opacity">
-                    Main Lagi 💘
-                </button>
+                <button onclick="backToStart()" class="text-pink-400 text-xs underline">Main Lagi</button>
             </div>
         </div>
     </div>
 
     <div id="gameOverScreen" class="screen" style="display: none;">
-        <div style="font-size: 80px;" class="mb-4">💔</div>
-        <h2 class="text-3xl font-bold mb-8 text-red-500">Yah, Tuyul Kalah...</h2>
+        <span class="text-7xl mb-4">💔</span>
+        <h2 class="text-2xl font-bold text-red-500 mb-6 uppercase tracking-tighter">Tuyulnya Patah Hati...</h2>
         <button onclick="initGame()"
-            class="bg-white text-slate-900 px-12 py-4 rounded-full font-bold shadow-xl active:scale-95 transition-transform">Coba
+            class="bg-white text-slate-900 px-10 py-3 rounded-full font-bold shadow-lg active:scale-95 transition-transform">Coba
             Lagi 🔄</button>
     </div>
 
     <script>
         let x, y, life, level, collected, required;
-        let speed = 6, dashReady = true;
+        let speed = 5, dashReady = true;
         let keys = {};
         let objects = [];
         let gameActive = false;
         let animationId;
 
+        // Visual Effects: Floating Hearts
+        function createBgHearts() {
+            const heart = document.createElement('div');
+            heart.className = 'heart-bg';
+            heart.innerHTML = ['❤️', '💖', '✨', '🌸'][Math.floor(Math.random() * 4)];
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.fontSize = (Math.random() * 20 + 10) + 'px';
+            heart.style.animationDuration = (Math.random() * 3 + 4) + 's';
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 6000);
+        }
+        setInterval(createBgHearts, 1000);
+
         function initGame() {
-            // Darah hanya diset 3 saat awal mulai atau coba lagi
             x = window.innerWidth / 2;
-            y = window.innerHeight / 2;
+            y = window.innerHeight / 2.5;
             life = 3;
             level = 1;
             gameActive = true;
@@ -233,7 +307,6 @@
             document.getElementById('startScreen').style.display = 'none';
             document.getElementById('winScreen').style.display = 'none';
             document.getElementById('gameOverScreen').style.display = 'none';
-
             document.getElementById('gameArea').style.display = 'block';
             document.getElementById('gameUI').style.opacity = '1';
 
@@ -242,19 +315,14 @@
             update();
         }
 
-        function backToStart() {
-            document.getElementById('winScreen').style.display = 'none';
-            document.getElementById('startScreen').style.display = 'flex';
-        }
-
         function resetLevel() {
             objects.forEach(o => o.el.remove());
             objects = [];
             collected = 0;
-            required = 5 + (level * 2);
+            required = 4 + (level * 2);
 
             document.getElementById('bar').style.width = '0%';
-            document.getElementById('life').innerText = life; // Sisa darah dipertahankan
+            document.getElementById('life').innerText = life;
             document.getElementById('level').innerText = level;
 
             for (let i = 0; i < required; i++) createObj('heart');
@@ -263,20 +331,21 @@
 
         function createObj(type) {
             let el = document.createElement('div');
-            el.className = 'absolute text-3xl select-none transition-transform duration-300';
-            el.innerHTML = type === 'heart' ? '💖' : '💔';
-            el.style.left = Math.random() * (window.innerWidth - 50) + 'px';
-            el.style.top = Math.random() * (window.innerHeight - 350) + 100 + 'px';
+            el.className = 'absolute text-3xl select-none transition-transform duration-300 hover:scale-125';
+            el.innerHTML = type === 'heart' ? '💖' : '💣';
+            el.style.left = Math.random() * (window.innerWidth - 60) + 10 + 'px';
+            el.style.top = Math.random() * (window.innerHeight - 380) + 150 + 'px';
+            el.style.filter = type === 'enemy' ? 'hue-rotate(180deg)' : 'none';
             document.getElementById('gameArea').appendChild(el);
             objects.push({ el, type });
         }
 
         function activateDash() {
             if (!dashReady) return;
-            speed = 15; dashReady = false;
-            document.getElementById('dashBtn').style.opacity = '0.3';
-            setTimeout(() => speed = 6, 250);
-            setTimeout(() => { dashReady = true; document.getElementById('dashBtn').style.opacity = '1'; }, 1800);
+            speed = 12; dashReady = false;
+            document.getElementById('dashBtn').style.opacity = '0.4';
+            setTimeout(() => speed = 5, 200);
+            setTimeout(() => { dashReady = true; document.getElementById('dashBtn').style.opacity = '1'; }, 1500);
         }
 
         function setupBtn(id, key) {
@@ -294,7 +363,7 @@
             if (keys['a']) { x -= speed; document.getElementById('player').style.transform = 'scaleX(-1)'; }
             if (keys['d']) { x += speed; document.getElementById('player').style.transform = 'scaleX(1)'; }
 
-            x = Math.max(15, Math.min(window.innerWidth - 50, x));
+            x = Math.max(10, Math.min(window.innerWidth - 50, x));
             y = Math.max(100, Math.min(window.innerHeight - 350, y));
 
             const p = document.getElementById('player');
@@ -303,23 +372,28 @@
             objects.forEach((obj, i) => {
                 let r1 = p.getBoundingClientRect();
                 let r2 = obj.el.getBoundingClientRect();
+
                 if (!(r1.right < r2.left || r1.left > r2.right || r1.bottom < r2.top || r1.top > r2.bottom)) {
                     if (obj.type === 'heart') {
                         collected++;
-                        obj.el.remove();
+                        obj.el.style.transform = 'scale(2)';
+                        obj.el.style.opacity = '0';
+                        setTimeout(() => obj.el.remove(), 200);
                         objects.splice(i, 1);
                         document.getElementById('bar').style.width = (collected / required * 100) + '%';
+
                         if (collected >= required) {
                             level++;
-                            if (level > 2) winGame(); else resetLevel(); // Pindah level tanpa reset life
+                            if (level > 3) winGame(); else resetLevel();
                         }
                     } else {
                         life--;
                         document.getElementById('life').innerText = life;
                         obj.el.remove();
                         objects.splice(i, 1);
-                        document.body.style.backgroundColor = "#450a0a";
-                        setTimeout(() => document.body.style.backgroundColor = "#0f172a", 100);
+                        navigator.vibrate?.(100); // Getar jika kena bom (hanya android)
+                        document.body.style.background = "#450a0a";
+                        setTimeout(() => document.body.style.background = "#0f172a", 150);
                         if (life <= 0) gameOver();
                         else createObj('enemy');
                     }
@@ -340,6 +414,19 @@
             document.getElementById('gameArea').style.display = 'none';
             document.getElementById('gameUI').style.opacity = '0';
             document.getElementById('winScreen').style.display = 'flex';
+
+            // Confetti effect
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#f472b6', '#e11d48', '#ffffff']
+            });
+        }
+
+        function backToStart() {
+            document.getElementById('winScreen').style.display = 'none';
+            document.getElementById('startScreen').style.display = 'flex';
         }
     </script>
 </body>
