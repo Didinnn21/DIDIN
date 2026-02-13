@@ -1,394 +1,346 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Tuyul & Buu Mantrii 💘</title>
+    <title>Misi Cinta Tuyul 💘</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Plus+Jakarta+Sans:wght@400;700&display=swap"
+        rel="stylesheet">
 
     <style>
         * {
             margin: 0;
             padding: 0;
-            box-sizing: border-box
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        html,
         body {
-            height: 100%;
-            font-family: 'Segoe UI', sans-serif;
-            background: radial-gradient(circle at top, #ff4da6, #1a001f 70%);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #0f172a;
             color: white;
             overflow: hidden;
+            touch-action: none;
         }
 
-        /* ===== START SCREEN ===== */
-        #startScreen {
-            position: fixed;
-            width: 100%;
+        .font-aesthetic {
+            font-family: 'Dancing Script', cursive;
+        }
+
+        #gameArea {
+            background: radial-gradient(circle at center, #310a31 0%, #0f0514 100%);
             height: 100dvh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 25px;
-            background: radial-gradient(circle, #ff4da6, #1a001f);
-            z-index: 10;
-        }
-
-        .start-box {
-            max-width: 500px
-        }
-
-        .start-btn {
-            padding: 14px 28px;
-            border: none;
-            border-radius: 30px;
-            background: linear-gradient(90deg, #ff4da6, #ff66cc);
-            color: white;
-            font-size: 16px;
-            margin-top: 20px;
-        }
-
-        /* ===== GAME ===== */
-        #game {
+            width: 100%;
             position: relative;
-            width: 100%;
-            height: 100dvh;
-            overflow: hidden;
-            display: none;
         }
 
-        .player,
-        .object {
-            position: absolute;
-            font-size: 28px;
+        .neon-text {
+            text-shadow: 0 0 10px #ff4da6, 0 0 20px #ff4da6;
         }
 
         .player {
-            font-size: 30px;
+            filter: drop-shadow(0 0 8px #fff);
+            z-index: 50;
+            transition: transform 0.1s;
         }
 
-        #ui {
-            position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 95%;
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 15px;
-            background: rgba(255, 255, 255, 0.15);
+        .progress-container {
+            width: 70%;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        #bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #f472b6, #db2777);
+            box-shadow: 0 0 15px #f472b6;
+            transition: width 0.3s ease;
+        }
+
+        .ctrl-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            position: absolute;
+            bottom: 40px;
+            left: 25px;
+        }
+
+        .btn-circle {
+            width: 65px;
+            height: 65px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(8px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-circle:active {
+            background: rgba(244, 114, 182, 0.5);
+            transform: scale(0.9);
+        }
+
+        #dashBtn {
+            position: absolute;
+            bottom: 55px;
+            right: 35px;
+            width: 85px;
+            height: 85px;
+            background: linear-gradient(135deg, #ec4899, #be185d);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            box-shadow: 0 0 25px rgba(236, 72, 153, 0.6);
+            border: 2px solid white;
             font-size: 14px;
         }
 
-        .progress {
-            position: absolute;
-            bottom: 110px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 75%;
-            height: 12px;
-            background: #333;
-            border-radius: 10px;
-        }
-
-        .bar {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #ff4da6, #ff99cc);
-            transition: 0.2s;
-        }
-
-        #controls {
-            position: absolute;
-            bottom: 15px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 10px;
-        }
-
-        .ctrl-btn {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            border: none;
-            font-size: 22px;
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-        }
-
-        .ctrl-btn:active {
-            background: #ff4da6
-        }
-
-        @media(min-width:768px) {
-            #controls {
-                display: none;
-            }
-        }
-
-        .center {
-            min-height: 100dvh;
+        .screen {
+            position: fixed;
+            inset: 0;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            padding: 40px 20px;
+            justify-content: center;
+            z-index: 100;
+            background: rgba(15, 23, 42, 0.98);
+            padding: 25px;
             text-align: center;
-            background: radial-gradient(circle, #ff4da6, #1a001f);
         }
     </style>
 </head>
 
 <body>
 
-    <audio id="bgMusic" src="game.mp3" loop></audio>
-    <audio id="winMusic" src="win.mp3"></audio>
-
-    <!-- START SCREEN -->
-    <div id="startScreen">
-        <div class="start-box">
-            <h1>💘 Misi Tuyul untuk Buu Mantrii 💘</h1>
-            <p>
-                👻 Kumpulkan semua 💖 <br>
-                💔 Hindari musuh <br>
-                🎮 WASD / Tombol HP <br>
-                ⚡ Dash untuk lari cepat <br><br>
-                🎯 Selesaikan 3 level untuk membuka hadiah Valentine
-            </p>
-            <button class="start-btn" onclick="startGame()">Mulai 💘</button>
+    <div id="gameUI"
+        class="fixed top-0 left-0 w-full p-6 z-50 flex justify-between items-center pointer-events-none opacity-0 transition-opacity duration-500">
+        <div class="bg-black/40 px-5 py-2 rounded-full border border-pink-500/40 backdrop-blur-md">
+            ❤️ <span id="life" class="font-bold text-pink-400 text-xl">3</span>
+        </div>
+        <div class="bg-black/40 px-5 py-2 rounded-full border border-pink-500/40 backdrop-blur-md">
+            Level: <span id="level" class="font-bold">1</span>
         </div>
     </div>
 
-    <!-- GAME -->
-    <div id="game">
-        <div id="ui">
-            <div>❤️ <span id="life">3</span></div>
-            <div>Level <span id="level">1</span></div>
-            <div>Dash <span id="dash">Ready</span></div>
+    <div id="startScreen" class="screen">
+        <lottie-player src="https://assets3.lottiefiles.com/packages/lf20_i9mxcD.json" background="transparent"
+            speed="1" style="width: 200px; height: 200px;" loop autoplay></lottie-player>
+        <h1 class="text-3xl font-aesthetic text-pink-500 mb-6 neon-text">Misi Cinta Tuyul</h1>
+
+        <div class="bg-white/5 p-8 rounded-[40px] border border-white/10 mb-10 max-w-sm shadow-2xl backdrop-blur-sm">
+            <p class="text-slate-200 text-sm md:text-base leading-relaxed italic">
+                Maaf ya aku belum bisa kasih hadiah seperti orang lain.<br>
+                Belum bisa datang bawa bunga sungguhan.<br>
+                Untuk sekarang, aku cuma bisa kasih ini.<br><br>
+                Sederhana mungkin. Tapi tulus.
+            </p>
         </div>
 
-        <div id="player" class="player">👻</div>
+        <button onclick="initGame()"
+            class="bg-gradient-to-r from-pink-500 to-rose-600 px-16 py-4 rounded-full font-bold shadow-xl shadow-pink-500/40 uppercase tracking-widest text-sm active:scale-95 transition-transform">
+            Mulai Misi 💘
+        </button>
+    </div>
 
-        <div class="progress">
-            <div id="bar" class="bar"></div>
+    <div id="gameArea" style="display: none;">
+        <div id="player" class="player absolute text-4xl select-none">👻</div>
+
+        <div class="fixed bottom-36 left-0 w-full flex justify-center pointer-events-none">
+            <div class="progress-container">
+                <div id="bar"></div>
+            </div>
         </div>
 
-        <div id="controls">
-            <button class="ctrl-btn" id="up">⬆️</button>
-            <button class="ctrl-btn" id="left">⬅️</button>
-            <button class="ctrl-btn" id="down">⬇️</button>
-            <button class="ctrl-btn" id="right">➡️</button>
-            <button class="ctrl-btn" id="dashBtn">⚡</button>
+        <div class="ctrl-grid">
+            <div></div>
+            <div class="btn-circle" id="up">⬆️</div>
+            <div></div>
+            <div class="btn-circle" id="left">⬅️</div>
+            <div class="btn-circle" id="down">⬇️</div>
+            <div class="btn-circle" id="right">➡️</div>
         </div>
+        <div id="dashBtn" ontouchstart="activateDash()">⚡ DASH</div>
+    </div>
+
+    <div id="winScreen" class="screen" style="display: none; overflow-y: auto;">
+        <div class="py-10">
+            <lottie-player src="https://assets10.lottiefiles.com/packages/lf20_m6cu96.json" background="transparent"
+                speed="1" style="width: 250px; height: 250px; margin: auto;" loop autoplay></lottie-player>
+            <h2 class="text-4xl font-aesthetic text-pink-500 mb-4 neon-text">Happy Valentine 💘</h2>
+
+            <div
+                class="bg-white/10 p-8 rounded-[40px] border border-white/20 backdrop-blur-lg mb-8 max-w-sm mx-auto text-left shadow-2xl">
+                <p class="text-sm leading-relaxed text-slate-100 font-light">
+                    Terima kasih ya… sudah hadir di hidupku. Mungkin kamu nggak pernah sadar, tapi kehadiran kamu itu
+                    berarti banget buat aku.<br><br>
+                    Di tengah jarak dan kesibukan, kamu tetap jadi salah satu alasan kenapa aku sering senyum sendiri.
+                    Aku bangga banget sama perjuangan kamu di D3 Keperawatan ini.<br><br>
+                    <span class="text-pink-400 font-bold font-aesthetic text-xl drop-shadow-sm">Nanti pas kamu wisuda,
+                        bunga tercantik dariku akan sampai ke tanganmu. Janji! 💐</span>
+                </p>
+            </div>
+
+            <div class="flex flex-col gap-5 items-center">
+                <a href="logic.html"
+                    class="bg-white text-pink-600 px-12 py-4 rounded-full font-bold shadow-2xl uppercase tracking-widest text-sm hover:scale-105 transition-transform">
+                    Buka Surat Terakhir 💌
+                </a>
+                <button onclick="backToStart()"
+                    class="text-pink-300 text-sm underline opacity-70 hover:opacity-100 transition-opacity">
+                    Main Lagi 💘
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="gameOverScreen" class="screen" style="display: none;">
+        <div style="font-size: 80px;" class="mb-4">💔</div>
+        <h2 class="text-3xl font-bold mb-8 text-red-500">Yah, Tuyul Kalah...</h2>
+        <button onclick="initGame()"
+            class="bg-white text-slate-900 px-12 py-4 rounded-full font-bold shadow-xl active:scale-95 transition-transform">Coba
+            Lagi 🔄</button>
     </div>
 
     <script>
-
-        let bgMusic = document.getElementById("bgMusic");
-        let winMusic = document.getElementById("winMusic");
-
-        let player = document.getElementById("player");
-        let lifeEl = document.getElementById("life");
-        let levelEl = document.getElementById("level");
-        let dashEl = document.getElementById("dash");
-        let bar = document.getElementById("bar");
-
-        let x, y;
-        let speed = 3;
-        let baseSpeed = 3;
-        let dashReady = true;
+        let x, y, life, level, collected, required;
+        let speed = 6, dashReady = true;
         let keys = {};
         let objects = [];
-        let life, level, collected, required;
-        let gameRunning = false;
+        let gameActive = false;
+        let animationId;
 
-        function resetValues() {
+        function initGame() {
+            // Darah hanya diset 3 saat awal mulai atau coba lagi
+            x = window.innerWidth / 2;
+            y = window.innerHeight / 2;
             life = 3;
             level = 1;
-            collected = 0;
-            required = 8;
-            x = 100;
-            y = 150;
-            speed = baseSpeed;
-            dashReady = true;
-            lifeEl.textContent = life;
-            levelEl.textContent = level;
-            bar.style.width = "0%";
+            gameActive = true;
+
+            document.getElementById('startScreen').style.display = 'none';
+            document.getElementById('winScreen').style.display = 'none';
+            document.getElementById('gameOverScreen').style.display = 'none';
+
+            document.getElementById('gameArea').style.display = 'block';
+            document.getElementById('gameUI').style.opacity = '1';
+
+            resetLevel();
+            if (animationId) cancelAnimationFrame(animationId);
+            update();
         }
 
-        function startGame() {
-            document.getElementById("startScreen").style.display = "none";
-            document.getElementById("game").style.display = "block";
-            bgMusic.currentTime = 0;
-            bgMusic.volume = 0.5;
-            bgMusic.play();
-            resetValues();
-            startLevel();
-            if (!gameRunning) {
-                update();
-                gameRunning = true;
-            }
+        function backToStart() {
+            document.getElementById('winScreen').style.display = 'none';
+            document.getElementById('startScreen').style.display = 'flex';
         }
 
-        function restartGame() {
-            winMusic.pause();
-            winMusic.currentTime = 0;
-            document.querySelector(".center").remove();
-            document.getElementById("game").style.display = "block";
-            bgMusic.play();
-            resetValues();
-            startLevel();
-        }
-
-        document.addEventListener("keydown", e => {
-            keys[e.key] = true;
-            if (e.key === "Shift") activateDash();
-        });
-        document.addEventListener("keyup", e => keys[e.key] = false);
-
-        function holdButton(id, key) {
-            let btn = document.getElementById(id);
-            btn.addEventListener("touchstart", e => {
-                e.preventDefault();
-                keys[key] = true;
-            });
-            btn.addEventListener("touchend", e => {
-                e.preventDefault();
-                keys[key] = false;
-            });
-        }
-
-        holdButton("up", "w");
-        holdButton("down", "s");
-        holdButton("left", "a");
-        holdButton("right", "d");
-        document.getElementById("dashBtn").addEventListener("touchstart", activateDash);
-
-        function activateDash() {
-            if (dashReady) {
-                speed = 7;
-                dashReady = false;
-                dashEl.textContent = "Cooldown";
-                setTimeout(() => speed = baseSpeed, 200);
-                setTimeout(() => {
-                    dashReady = true;
-                    dashEl.textContent = "Ready";
-                }, 1500);
-            }
-        }
-
-        function createObject(type) {
-            let el = document.createElement("div");
-            el.classList.add("object");
-            el.textContent = type === "heart" ? "💖" : "💔";
-
-            let safeTop = 80;
-            let safeBottom = 160;
-
-            el.style.left = Math.random() * (window.innerWidth - 40) + "px";
-            el.style.top = (Math.random() * (window.innerHeight - safeBottom - safeTop) + safeTop) + "px";
-
-            document.getElementById("game").appendChild(el);
-            objects.push({ el, type });
-        }
-
-        function startLevel() {
+        function resetLevel() {
             objects.forEach(o => o.el.remove());
             objects = [];
             collected = 0;
-            required = 8 + level * 2;
-            levelEl.textContent = level;
+            required = 5 + (level * 2);
 
-            for (let i = 0; i < required; i++) createObject("heart");
-            for (let i = 0; i < level; i++) createObject("enemy");
+            document.getElementById('bar').style.width = '0%';
+            document.getElementById('life').innerText = life; // Sisa darah dipertahankan
+            document.getElementById('level').innerText = level;
+
+            for (let i = 0; i < required; i++) createObj('heart');
+            for (let i = 0; i < level + 1; i++) createObj('enemy');
         }
 
+        function createObj(type) {
+            let el = document.createElement('div');
+            el.className = 'absolute text-3xl select-none transition-transform duration-300';
+            el.innerHTML = type === 'heart' ? '💖' : '💔';
+            el.style.left = Math.random() * (window.innerWidth - 50) + 'px';
+            el.style.top = Math.random() * (window.innerHeight - 350) + 100 + 'px';
+            document.getElementById('gameArea').appendChild(el);
+            objects.push({ el, type });
+        }
+
+        function activateDash() {
+            if (!dashReady) return;
+            speed = 15; dashReady = false;
+            document.getElementById('dashBtn').style.opacity = '0.3';
+            setTimeout(() => speed = 6, 250);
+            setTimeout(() => { dashReady = true; document.getElementById('dashBtn').style.opacity = '1'; }, 1800);
+        }
+
+        function setupBtn(id, key) {
+            const btn = document.getElementById(id);
+            btn.addEventListener('touchstart', (e) => { e.preventDefault(); keys[key] = true; });
+            btn.addEventListener('touchend', (e) => { e.preventDefault(); keys[key] = false; });
+        }
+        setupBtn('up', 'w'); setupBtn('down', 's'); setupBtn('left', 'a'); setupBtn('right', 'd');
+
         function update() {
+            if (!gameActive) return;
 
-            if (keys["ArrowRight"] || keys["d"]) x += speed;
-            if (keys["ArrowLeft"] || keys["a"]) x -= speed;
-            if (keys["ArrowUp"] || keys["w"]) y -= speed;
-            if (keys["ArrowDown"] || keys["s"]) y += speed;
+            if (keys['w']) y -= speed;
+            if (keys['s']) y += speed;
+            if (keys['a']) { x -= speed; document.getElementById('player').style.transform = 'scaleX(-1)'; }
+            if (keys['d']) { x += speed; document.getElementById('player').style.transform = 'scaleX(1)'; }
 
-            const pw = player.offsetWidth;
-            const ph = player.offsetHeight;
+            x = Math.max(15, Math.min(window.innerWidth - 50, x));
+            y = Math.max(100, Math.min(window.innerHeight - 350, y));
 
-            x = Math.max(0, Math.min(window.innerWidth - pw, x));
-            y = Math.max(60, Math.min(window.innerHeight - ph - 120, y));
+            const p = document.getElementById('player');
+            p.style.left = x + 'px'; p.style.top = y + 'px';
 
-            player.style.left = x + "px";
-            player.style.top = y + "px";
-
-            objects.forEach((obj, index) => {
-                if (obj.type === "enemy") {
-                    let dx = x - obj.el.offsetLeft;
-                    let dy = y - obj.el.offsetTop;
-                    let dist = Math.sqrt(dx * dx + dy * dy);
-                    if (dist > 0) {
-                        obj.el.style.left = (obj.el.offsetLeft + (dx / dist) * (1 + level * 0.4)) + "px";
-                        obj.el.style.top = (obj.el.offsetTop + (dy / dist) * (1 + level * 0.4)) + "px";
-                    }
-                }
-
-                if (collide(player, obj.el)) {
-                    if (obj.type === "enemy") {
-                        life--;
-                        lifeEl.textContent = life;
-                        obj.el.remove();
-                        objects.splice(index, 1);
-                        if (life <= 0) resetValues(), startLevel();
-                    } else {
+            objects.forEach((obj, i) => {
+                let r1 = p.getBoundingClientRect();
+                let r2 = obj.el.getBoundingClientRect();
+                if (!(r1.right < r2.left || r1.left > r2.right || r1.bottom < r2.top || r1.top > r2.bottom)) {
+                    if (obj.type === 'heart') {
                         collected++;
                         obj.el.remove();
-                        objects.splice(index, 1);
-                        bar.style.width = (collected / required * 100) + "%";
+                        objects.splice(i, 1);
+                        document.getElementById('bar').style.width = (collected / required * 100) + '%';
                         if (collected >= required) {
                             level++;
-                            if (level > 3) winGame();
-                            else startLevel();
+                            if (level > 2) winGame(); else resetLevel(); // Pindah level tanpa reset life
                         }
+                    } else {
+                        life--;
+                        document.getElementById('life').innerText = life;
+                        obj.el.remove();
+                        objects.splice(i, 1);
+                        document.body.style.backgroundColor = "#450a0a";
+                        setTimeout(() => document.body.style.backgroundColor = "#0f172a", 100);
+                        if (life <= 0) gameOver();
+                        else createObj('enemy');
                     }
                 }
             });
-
-            requestAnimationFrame(update);
+            animationId = requestAnimationFrame(update);
         }
 
-        function collide(a, b) {
-            let r1 = a.getBoundingClientRect();
-            let r2 = b.getBoundingClientRect();
-            return !(r1.right < r2.left || r1.left > r2.right || r1.bottom < r2.top || r1.top > r2.bottom);
+        function gameOver() {
+            gameActive = false;
+            document.getElementById('gameArea').style.display = 'none';
+            document.getElementById('gameUI').style.opacity = '0';
+            document.getElementById('gameOverScreen').style.display = 'flex';
         }
 
         function winGame() {
-            bgMusic.pause();
-            winMusic.volume = 0.7;
-            winMusic.play();
-
-            document.getElementById("game").style.display = "none";
-
-            let winScreen = document.createElement("div");
-            winScreen.className = "center";
-            winScreen.innerHTML = `
-    <div style="font-size:120px;">🌹</div>
-    <h1>Happy Valentine 💘</h1>
-    <p style="max-width:600px;margin-top:20px;line-height:1.8;font-size:18px;">
-      Terima kasih sudah hadir di hidupku 🤍
-    </p>
-    <button onclick="restartGame()" 
-      style="margin-top:40px;padding:12px 25px;border:none;border-radius:25px;
-      background:linear-gradient(90deg,#ff4da6,#ff66cc);
-      color:white;font-size:16px;">
-      Main Lagi 💘
-    </button>
-  `;
-            document.body.appendChild(winScreen);
+            gameActive = false;
+            document.getElementById('gameArea').style.display = 'none';
+            document.getElementById('gameUI').style.opacity = '0';
+            document.getElementById('winScreen').style.display = 'flex';
         }
-
     </script>
 </body>
 
